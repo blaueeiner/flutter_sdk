@@ -45,13 +45,15 @@ class _MyAppState extends State<MyApp> {
     }
 
     // Initialise command executor.
-    _commandExecutor = new CommandExecutor(_baseUrl, _gdprUrl, _subscriptionUrl);
+    _commandExecutor =
+        new CommandExecutor(_baseUrl, _gdprUrl, _subscriptionUrl);
 
     // Initialise test library.
-    TestLib.setExecuteCommandHalder((final dynamic callArgs) {
+    TestLib.setExecuteCommandHandler((final dynamic callArgs) {
       print('[AdjustTestApp]: executeCommandHandler pinged in test app!');
       Command command = new Command(callArgs);
-      print('[AdjustTestApp]: Executing command ${command.className}.${command.methodName}');
+      print(
+          '[AdjustTestApp]: Executing command ${command.className}.${command.methodName}');
       _commandExecutor.executeCommand(command);
     });
     TestLib.init(_baseUrl!, _controlUrl);
@@ -72,7 +74,8 @@ class _MyAppState extends State<MyApp> {
                 new Text('Running'),
                 buildCupertinoButton(
                     'Start Test Session',
-                    () => Adjust.getSdkVersion().then((sdkVersion) {
+                    () => Adjust.instance.getSdkVersion().then((sdkVersion) {
+                      print(sdkVersion);
                           TestLib.startTestSession(sdkVersion);
                         }))
               ])))
