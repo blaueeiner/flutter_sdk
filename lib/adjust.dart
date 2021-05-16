@@ -17,158 +17,175 @@ import 'package:adjust_sdk/adjust_third_party_sharing.dart';
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 
+const MethodChannel _channel = const MethodChannel('com.adjust.sdk/api');
+const String _sdkPrefix = 'flutter4.28.0';
+
 class Adjust {
-  static const String _sdkPrefix = 'flutter4.28.0';
-  static const MethodChannel _channel = const MethodChannel('com.adjust.sdk/api');
+  const Adjust._();
 
-  static void start(AdjustConfig config) {
+  static final Adjust instance = Adjust._();
+
+  Future<void> start(AdjustConfig config) async {
     config.sdkPrefix = _sdkPrefix;
-    _channel.invokeMethod('start', config.toMap);
+    await _channel.invokeMethod('start', config.toMap);
   }
 
-  static void trackEvent(AdjustEvent event) {
-    _channel.invokeMethod('trackEvent', event.toMap);
+  Future<void> trackEvent(AdjustEvent event) async {
+    await _channel.invokeMethod('trackEvent', event.toMap);
   }
 
-  static void setEnabled(bool isEnabled) {
-    _channel.invokeMethod('setEnabled', {'isEnabled': isEnabled});
+  Future<void> setEnabled(bool isEnabled) async {
+    await _channel.invokeMethod('setEnabled', {'isEnabled': isEnabled});
   }
 
-  static void setOfflineMode(bool isOffline) {
-    _channel.invokeMethod('setOfflineMode', {'isOffline': isOffline});
+  Future<void> setOfflineMode(bool isOffline) async {
+    await _channel.invokeMethod('setOfflineMode', {'isOffline': isOffline});
   }
 
-  static void setPushToken(String token) {
-    _channel.invokeMethod('setPushToken', {'pushToken': token});
+  Future<void> setPushToken(String token) async {
+    await _channel.invokeMethod('setPushToken', {'pushToken': token});
   }
 
-  static void setReferrer(String referrer) {
+  Future<void> setReferrer(String referrer) async {
     _channel.invokeMethod('setReferrer', {'referrer': referrer});
   }
 
-  static void appWillOpenUrl(String url) {
-    _channel.invokeMethod('appWillOpenUrl', {'url': url});
+  Future<void> appWillOpenUrl(String url) async {
+    await _channel.invokeMethod('appWillOpenUrl', {'url': url});
   }
 
-  static void sendFirstPackages() {
-    _channel.invokeMethod('sendFirstPackages');
+  Future<void> sendFirstPackages() async {
+    await _channel.invokeMethod('sendFirstPackages');
   }
 
-  static void gdprForgetMe() {
-    _channel.invokeMethod('gdprForgetMe');
+  Future<void> gdprForgetMe() async {
+    await _channel.invokeMethod('gdprForgetMe');
   }
 
-  static void disableThirdPartySharing() {
-    _channel.invokeMethod('disableThirdPartySharing');
+  Future<void> disableThirdPartySharing() async {
+    await _channel.invokeMethod('disableThirdPartySharing');
   }
 
-  static void onResume() {
-    _channel.invokeMethod('onResume');
+  Future<void> onResume() async {
+    await _channel.invokeMethod('onResume');
   }
 
-  static void onPause() {
-    _channel.invokeMethod('onPause');
+  Future<void> onPause() async {
+    await _channel.invokeMethod('onPause');
   }
 
-  static Future<bool> isEnabled() async {
+  Future<bool> isEnabled() async {
     final bool isEnabled = await _channel.invokeMethod('isEnabled');
     return isEnabled;
   }
 
   // Return value could be `null`
-  static Future<String?> getAdid() async {
+  Future<String?> getAdid() async {
     final String? adid = await _channel.invokeMethod('getAdid');
     return adid;
   }
 
-  static Future<String?> getIdfa() async {
+  Future<String?> getIdfa() async {
     final String? idfa = await _channel.invokeMethod('getIdfa');
     return idfa;
   }
 
-  static Future<String?> getAmazonAdId() async {
+  Future<String?> getAmazonAdId() async {
     final String? amazonAdId = await _channel.invokeMethod('getAmazonAdId');
     return amazonAdId;
   }
 
-  static Future<String?> getGoogleAdId() async {
+  Future<String?> getGoogleAdId() async {
     final String? googleAdId = await _channel.invokeMethod('getGoogleAdId');
     return googleAdId;
   }
 
-  static Future<num?> requestTrackingAuthorizationWithCompletionHandler() async {
-    final num? status =
-        await _channel.invokeMethod('requestTrackingAuthorizationWithCompletionHandler');
+  Future<num?>
+      requestTrackingAuthorizationWithCompletionHandler() async {
+    final num? status = await _channel
+        .invokeMethod('requestTrackingAuthorizationWithCompletionHandler');
     return status;
   }
 
-  static Future<int?> getAppTrackingAuthorizationStatus() async {
+  Future<int?> getAppTrackingAuthorizationStatus() async {
     final int? authorizationStatus =
         await _channel.invokeMethod('getAppTrackingAuthorizationStatus');
     return authorizationStatus;
   }
 
-  static Future<AdjustAttribution> getAttribution() async {
-    final dynamic attributionMap = await _channel.invokeMethod('getAttribution');
+  Future<AdjustAttribution> getAttribution() async {
+    final dynamic attributionMap =
+        await _channel.invokeMethod('getAttribution');
     return AdjustAttribution.fromMap(attributionMap);
   }
 
-  static Future<String> getSdkVersion() async {
+  Future<String> getSdkVersion() async {
     final String sdkVersion = await _channel.invokeMethod('getSdkVersion');
     return _sdkPrefix + '@' + sdkVersion;
   }
 
-  static void addSessionCallbackParameter(String key, String value) {
-    _channel.invokeMethod('addSessionCallbackParameter', {'key': key, 'value': value});
+  Future<void> addSessionCallbackParameter(String key, String value) async {
+    await _channel.invokeMethod(
+        'addSessionCallbackParameter', {'key': key, 'value': value});
   }
 
-  static void addSessionPartnerParameter(String key, String value) {
-    _channel.invokeMethod('addSessionPartnerParameter', {'key': key, 'value': value});
+  Future<void> addSessionPartnerParameter(String key, String value) async {
+    await _channel.invokeMethod(
+        'addSessionPartnerParameter', {'key': key, 'value': value});
   }
 
-  static void removeSessionCallbackParameter(String key) {
-    _channel.invokeMethod('removeSessionCallbackParameter', {'key': key});
+  Future<void> removeSessionCallbackParameter(String key) async {
+    await _channel.invokeMethod('removeSessionCallbackParameter', {'key': key});
   }
 
-  static void removeSessionPartnerParameter(String key) {
-    _channel.invokeMethod('removeSessionPartnerParameter', {'key': key});
+  Future<void> removeSessionPartnerParameter(String key) async {
+    await _channel.invokeMethod('removeSessionPartnerParameter', {'key': key});
   }
 
-  static void resetSessionCallbackParameters() {
-    _channel.invokeMethod('resetSessionCallbackParameters');
+  Future<void> resetSessionCallbackParameters() async {
+    await _channel.invokeMethod('resetSessionCallbackParameters');
   }
 
-  static void resetSessionPartnerParameters() {
-    _channel.invokeMethod('resetSessionPartnerParameters');
+  Future<void> resetSessionPartnerParameters() async {
+    await _channel.invokeMethod('resetSessionPartnerParameters');
   }
 
-  static void trackAdRevenue(String source, String payload) {
-    _channel.invokeMethod('trackAdRevenue', {'source': source, 'payload': payload});
+  static void trackAdRevenue(String source, String payload) async {
+    await _channel
+        .invokeMethod('trackAdRevenue', {'source': source, 'payload': payload});
   }
 
-  static void trackAppStoreSubscription(AdjustAppStoreSubscription subscription) {
-    _channel.invokeMethod('trackAppStoreSubscription', subscription.toMap);
+  Future<void> trackAppStoreSubscription(
+      AdjustAppStoreSubscription subscription) async {
+    await _channel.invokeMethod(
+        'trackAppStoreSubscription', subscription.toMap);
   }
 
-  static void trackPlayStoreSubscription(AdjustPlayStoreSubscription subscription) {
-    _channel.invokeMethod('trackPlayStoreSubscription', subscription.toMap);
+  Future<void> trackPlayStoreSubscription(
+      AdjustPlayStoreSubscription subscription) async {
+    await _channel.invokeMethod(
+        'trackPlayStoreSubscription', subscription.toMap);
   }
 
-  static void trackThirdPartySharing(AdjustThirdPartySharing thirdPartySharing) {
-    _channel.invokeMethod('trackThirdPartySharing', thirdPartySharing.toMap);
+  Future<void> trackThirdPartySharing(
+      AdjustThirdPartySharing thirdPartySharing) async {
+    await _channel.invokeMethod(
+        'trackThirdPartySharing', thirdPartySharing.toMap);
   }
 
-  static void trackMeasurementConsent(bool measurementConsent) {
-    _channel.invokeMethod('trackMeasurementConsent', {'measurementConsent': measurementConsent});
+  Future<void> trackMeasurementConsent(bool measurementConsent) async {
+    await _channel.invokeMethod(
+        'trackMeasurementConsent', {'measurementConsent': measurementConsent});
   }
 
-  static void updateConversionValue(int conversionValue) {
-    _channel.invokeMethod('updateConversionValue', {'conversionValue': conversionValue});
+  Future<void> updateConversionValue(int conversionValue) async {
+    await _channel.invokeMethod(
+        'updateConversionValue', {'conversionValue': conversionValue});
   }
 
   // For testing purposes only. Do not use in production.
   @visibleForTesting
-  static void setTestOptions(final dynamic testOptions) {
-    _channel.invokeMethod('setTestOptions', testOptions);
+  Future<void> setTestOptions(final dynamic testOptions) async {
+    await _channel.invokeMethod('setTestOptions', testOptions);
   }
 }
