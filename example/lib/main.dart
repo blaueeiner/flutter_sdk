@@ -63,6 +63,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   bool _isSdkEnabled = true;
 
+  late final Adjust _adjust = Adjust.instance;
+
   @override
   initState() {
     super.initState();
@@ -82,10 +84,10 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
       case AppLifecycleState.inactive:
         break;
       case AppLifecycleState.resumed:
-        Adjust.onResume();
+        _adjust.onResume();
         break;
       case AppLifecycleState.paused:
-        Adjust.onPause();
+        _adjust.onPause();
         break;
       case AppLifecycleState.detached:
         break;
@@ -94,7 +96,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
-    AdjustConfig config = new AdjustConfig('2fm9gkqubvpc', AdjustEnvironment.sandbox);
+    AdjustConfig config =
+        new AdjustConfig('2fm9gkqubvpc', AdjustEnvironment.sandbox);
     config.logLevel = AdjustLogLevel.verbose;
     // config.isDeviceKnown = false;
     // config.defaultTracker = 'abc123';
@@ -110,7 +113,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
       print('[Adjust]: Attribution changed!');
 
       if (attributionChangedData.trackerToken != null) {
-        print('[Adjust]: Tracker token: ' + attributionChangedData.trackerToken!);
+        print(
+            '[Adjust]: Tracker token: ' + attributionChangedData.trackerToken!);
       }
       if (attributionChangedData.trackerName != null) {
         print('[Adjust]: Tracker name: ' + attributionChangedData.trackerName!);
@@ -165,7 +169,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         print('[Adjust]: Adid: ' + sessionFailureData.adid!);
       }
       if (sessionFailureData.willRetry != null) {
-        print('[Adjust]: Will retry: ' + sessionFailureData.willRetry.toString());
+        print(
+            '[Adjust]: Will retry: ' + sessionFailureData.willRetry.toString());
       }
       if (sessionFailureData.jsonResponse != null) {
         print('[Adjust]: JSON response: ' + sessionFailureData.jsonResponse!);
@@ -226,25 +231,25 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     };
 
     // Add session callback parameters.
-    Adjust.addSessionCallbackParameter('scp_foo_1', 'scp_bar');
-    Adjust.addSessionCallbackParameter('scp_foo_2', 'scp_value');
+    _adjust.addSessionCallbackParameter('scp_foo_1', 'scp_bar');
+    _adjust.addSessionCallbackParameter('scp_foo_2', 'scp_value');
 
     // Add session Partner parameters.
-    Adjust.addSessionPartnerParameter('spp_foo_1', 'spp_bar');
-    Adjust.addSessionPartnerParameter('spp_foo_2', 'spp_value');
+    _adjust.addSessionPartnerParameter('spp_foo_1', 'spp_bar');
+    _adjust.addSessionPartnerParameter('spp_foo_2', 'spp_value');
 
     // Remove session callback parameters.
-    Adjust.removeSessionCallbackParameter('scp_foo_1');
-    Adjust.removeSessionPartnerParameter('spp_foo_1');
+    _adjust.removeSessionCallbackParameter('scp_foo_1');
+    _adjust.removeSessionPartnerParameter('spp_foo_1');
 
     // Clear all session callback parameters.
-    Adjust.resetSessionCallbackParameters();
+    _adjust.resetSessionCallbackParameters();
 
     // Clear all session partner parameters.
-    Adjust.resetSessionPartnerParameters();
+    _adjust.resetSessionPartnerParameters();
 
     // Ask for tracking consent.
-    Adjust.requestTrackingAuthorizationWithCompletionHandler().then((status) {
+    _adjust.requestTrackingAuthorizationWithCompletionHandler().then((status) {
       print('[Adjust]: Authorization status update!');
       switch (status) {
         case 0:
@@ -267,7 +272,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     });
 
     // Start SDK.
-    Adjust.start(config);
+    _adjust.start(config);
   }
 
   @override
@@ -282,35 +287,36 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
               <Widget>[
                 const Padding(padding: const EdgeInsets.all(7.0)),
 
-                Util.buildCupertinoButton('Is Enabled ?', () => _showIsSdkEnabled()),
+                Util.buildCupertinoButton(
+                    'Is Enabled ?', () => _showIsSdkEnabled()),
                 const Padding(padding: const EdgeInsets.all(7.0)),
 
                 // Track simple event button.
-                Util.buildCupertinoButton(
-                    'Track Sample Event', () => Adjust.trackEvent(Util.buildSimpleEvent())),
+                Util.buildCupertinoButton('Track Sample Event',
+                    () => _adjust.trackEvent(Util.buildSimpleEvent())),
                 const Padding(padding: const EdgeInsets.all(7.0)),
 
                 // Track revenue event button.
-                Util.buildCupertinoButton(
-                    'Track Revenue Event', () => Adjust.trackEvent(Util.buildRevenueEvent())),
+                Util.buildCupertinoButton('Track Revenue Event',
+                    () => _adjust.trackEvent(Util.buildRevenueEvent())),
                 const Padding(padding: const EdgeInsets.all(7.0)),
 
                 // Track callback event button.
-                Util.buildCupertinoButton(
-                    'Track Callback Event', () => Adjust.trackEvent(Util.buildCallbackEvent())),
+                Util.buildCupertinoButton('Track Callback Event',
+                    () => _adjust.trackEvent(Util.buildCallbackEvent())),
                 const Padding(padding: const EdgeInsets.all(7.0)),
 
                 // Track partner event button.
                 Util.buildCupertinoButton(
                     'Track Partner Event',
                     // () => Adjust.trackEvent(Util.buildPartnerEvent())),
-                    () => Adjust.disableThirdPartySharing()),
+                    () => _adjust.disableThirdPartySharing()),
                 const Padding(padding: const EdgeInsets.all(7.0)),
 
                 // Get Google Advertising Id.
                 Util.buildCupertinoButton(
                     'Get Google AdId',
-                    () => Adjust.getGoogleAdId().then((googleAdid) {
+                    () => _adjust.getGoogleAdId().then((googleAdid) {
                           _showDialogMessage('Get Google Advertising Id',
                               'Received Google Advertising Id: $googleAdid');
                         })),
@@ -319,16 +325,16 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                 // Get Adjust identifier.
                 Util.buildCupertinoButton(
                     'Get Adjust identifier',
-                    () => Adjust.getAdid().then((adid) {
-                          _showDialogMessage(
-                              'Adjust identifier', 'Received Adjust identifier: $adid');
+                    () => _adjust.getAdid().then((adid) {
+                          _showDialogMessage('Adjust identifier',
+                              'Received Adjust identifier: $adid');
                         })),
                 const Padding(padding: const EdgeInsets.all(7.0)),
 
                 // Get IDFA.
                 Util.buildCupertinoButton(
                     'Get IDFA',
-                    () => Adjust.getIdfa().then((idfa) {
+                    () => _adjust.getIdfa().then((idfa) {
                           _showDialogMessage('IDFA', 'Received IDFA: $idfa');
                         })),
                 const Padding(padding: const EdgeInsets.all(7.0)),
@@ -336,9 +342,9 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                 // Get attribution.
                 Util.buildCupertinoButton(
                     'Get attribution',
-                    () => Adjust.getAttribution().then((attribution) {
-                          _showDialogMessage(
-                              'Attribution', 'Received attribution: ${attribution.toString()}');
+                    () => _adjust.getAttribution().then((attribution) {
+                          _showDialogMessage('Attribution',
+                              'Received attribution: ${attribution.toString()}');
                         })),
                 const Padding(padding: const EdgeInsets.all(7.0)),
 
@@ -359,7 +365,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                       value: _isSdkEnabled,
                       onChanged: (bool value) {
                         setState(() {
-                          Adjust.setEnabled(value);
+                          _adjust.setEnabled(value);
                           _isSdkEnabled = value;
                           print('Switch state = $_isSdkEnabled');
                         });
@@ -380,16 +386,18 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   _showIsSdkEnabled() {
     try {
-      Adjust.isEnabled().then((isEnabled) {
+      _adjust.isEnabled().then((isEnabled) {
         _isSdkEnabled = isEnabled;
         _showDialogMessage('SDK Enabled?', 'Adjust is enabled = $isEnabled');
       });
     } on PlatformException {
-      _showDialogMessage('SDK Enabled?', 'no such method found im plugin: isEnabled');
+      _showDialogMessage(
+          'SDK Enabled?', 'no such method found im plugin: isEnabled');
     }
   }
 
-  void _showDialogMessage(String title, String text, [bool printToConsoleAlso = true]) {
+  void _showDialogMessage(String title, String text,
+      [bool printToConsoleAlso = true]) {
     if (printToConsoleAlso) {
       print(text);
     }

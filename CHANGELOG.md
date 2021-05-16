@@ -1,3 +1,16 @@
+### Version 5.0.0-nullsafety (TBA)
+This version includes breaking changes. Additional details can be found below.
+
+#### Changed
+- Migrated to null-safety.
+- API method calls are now instance members and `Adjust` is a mockable class.
+- All of the API method calls are now asynchronous. Since `MethodChannel.invokeMethod` returns a `Future`, the corresponding `Adjust` calls are converted into asynchronous methods.
+
+#### Native SDKs
+- [iOS@v4.28.0][ios_sdk_v4.28.0]
+- [Android@v4.27.0][android_sdk_v4.27.0]
+
+---
 ### Version 4.28.0 (2nd April 2021)
 #### Changed
 - Removed native iOS legacy code.

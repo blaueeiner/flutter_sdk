@@ -225,7 +225,7 @@ Make sure to initialise Adjust SDK as soon as possible in your Flutter app (upon
 
 ```dart
 AdjustConfig config = new AdjustConfig('{YourAppToken}', AdjustEnvironment.sandbox);
-Adjust.start(config);
+Adjust.instance.start(config);
 ```
 
 Replace `{YourAppToken}` with your app token. You can find this in your [dashboard].
@@ -249,7 +249,7 @@ Session tracking for iOS platform is supported out of the box, but in order to p
 
 ### <a id="qs-session-tracking-android"></a>Session tracking in Android
 
-On Android platform, it is important for you to hook up into app activity lifecycle methods and make a call to `Adjust.onResume()` when ever app enters foreground and a call to `Adjust.onPause()` when ever app leaves foreground. You can do this globally or per widget (call these method upon each transition from one widget to another). For example:
+On Android platform, it is important for you to hook up into app activity lifecycle methods and make a call to `Adjust.instance.onResume()` when ever app enters foreground and a call to `Adjust.instance.onPause()` when ever app leaves foreground. You can do this globally or per widget (call these method upon each transition from one widget to another). For example:
 
 ```dart
 class AdjustExampleApp extends StatelessWidget {
@@ -287,10 +287,10 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
       case AppLifecycleState.inactive:
         break;
       case AppLifecycleState.resumed:
-        Adjust.onResume();
+        Adjust.instance.onResume();
         break;
       case AppLifecycleState.paused:
-        Adjust.onPause();
+        Adjust.instance.onPause();
         break;
       case AppLifecycleState.suspending:
         break;
@@ -310,7 +310,7 @@ An App Secret is set by calling `setAppSecret` on your config instance:
 ```dart
 AdjustConfig adjustConfig = new AdjustConfig(yourAppToken, environment);
 adjustConfig.setAppSecret(secretId, info1, info2, info3, info4);
-Adjust.start(adjustConfig);
+Adjust.instance.start(adjustConfig);
 ```
 
 ### <a id="qs-adjust-logging"></a>Adjust logging
@@ -351,7 +351,7 @@ AdjustConfig adjustConfig = new AdjustConfig(yourAppToken, environment);
 adjustConfig.deferredDeeplinkCallback = (String uri) {
   print('[Adjust]: Received deferred deeplink: ' + uri);
 };
-Adjust.start(adjustConfig);
+Adjust.instance.start(adjustConfig);
 ```
 
 In deferred deep linking scenario, there is one additional setting which can be set on the config object. Once the Adjust SDK gets the deferred deep link information, we offer you the possibility to choose whether our SDK should open this URL or not. You can choose to set this option by assigning the `launchDeferredDeeplink` member of the config instance:
@@ -362,7 +362,7 @@ adjustConfig.launchDeferredDeeplink = true;
 adjustConfig.deferredDeeplinkCallback = (String uri) {
   print('[Adjust]: Received deferred deeplink: ' + uri);
 };
-Adjust.start(adjustConfig);
+Adjust.instance.start(adjustConfig);
 ```
 
 If nothing is set, **the Adjust SDK will always try to launch the URL by default**.
@@ -458,7 +458,7 @@ You can use adjust to track any event in your app. Suppose you want to track eve
 
 ```dart
 AdjustEvent adjustEvent = new AdjustEvent('abc123');
-Adjust.trackEvent(adjustEvent);
+Adjust.instance.trackEvent(adjustEvent);
 ```
 
 ### <a id="et-revenue"></a>Track revenue
@@ -468,7 +468,7 @@ If your users can generate revenue by tapping on advertisements or making in-app
 ```dart
 AdjustEvent adjustEvent = new AdjustEvent('abc123');
 adjustEvent.setRevenue(6, 'EUR');
-Adjust.trackEvent(adjustEvent);
+Adjust.instance.trackEvent(adjustEvent);
 ```
 
 This can be combined with callback parameters of course.
@@ -486,7 +486,7 @@ If you want to track in-app purchases, please make sure to call the `trackEvent`
 ```dart
 AdjustEvent adjustEvent = new AdjustEvent('abc123');
 adjustEvent.transactionId = '{TransactionId}';
-Adjust.trackEvent(adjustEvent);
+Adjust.instance.trackEvent(adjustEvent);
 ```
 
 ## Custom parameters
@@ -510,7 +510,7 @@ For example, suppose you have registered the URL `http://www.adjust.com/callback
 AdjustEvent adjustEvent = new AdjustEvent('abc123');
 adjustEvent.addCallbackParameter('key', 'value');
 adjustEvent.addCallbackParameter('foo', 'bar');
-Adjust.trackEvent(adjustEvent);
+Adjust.instance.trackEvent(adjustEvent);
 ```
 
 In that case we would track the event and send a request to:
@@ -533,7 +533,7 @@ This works similarly to the callback parameters mentioned above, but can be adde
 AdjustEvent adjustEvent = new AdjustEvent('abc123');
 adjustEvent.addPartnerParameter('key', 'value');
 adjustEvent.addPartnerParameter('foo', 'bar');
-Adjust.trackEvent(adjustEvent);
+Adjust.instance.trackEvent(adjustEvent);
 ```
 
 You can read more about special partners and these integrations in our [guide to special partners][special-partners].
@@ -545,7 +545,7 @@ You can also add custom string identifier to each event you want to track. This 
 ```dart
 AdjustEvent adjustEvent = new AdjustEvent('abc123');
 adjustEvent.callbackId = '{CallbackId}';
-Adjust.trackEvent(adjustEvent);
+Adjust.instance.trackEvent(adjustEvent);
 ```
 
 ### <a id="cp-session-parameters"></a>Session parameters
@@ -558,24 +558,24 @@ These session parameters can be called before the Adjust SDK is launched to make
 
 The same callback parameters that are registered for [events](#event-callback-parameters) can be also saved to be sent in every  event or session of the Adjust SDK.
 
-The session callback parameters have a similar interface to the event callback parameters. Instead of adding the key and it's value to an event, it's added through a call to `Adjust.addSessionCallbackParameter(String key, String value)`:
+The session callback parameters have a similar interface to the event callback parameters. Instead of adding the key and it's value to an event, it's added through a call to `Adjust.instance.addSessionCallbackParameter(String key, String value)`:
 
 ```dart
-Adjust.addSessionCallbackParameter('foo', 'bar');
+Adjust.instance.addSessionCallbackParameter('foo', 'bar');
 ```
 
 The session callback parameters will be merged with the callback parameters added to an event. The callback parameters added to an event have precedence over the session callback parameters. Meaning that, when adding a callback parameter to an event with the same key to one added from the session, the value that prevails is the callback parameter added to the event.
 
-It's possible to remove a specific session callback parameter by passing the desiring key to the method `Adjust.removeSessionCallbackParameter(String key)`.
+It's possible to remove a specific session callback parameter by passing the desiring key to the method `Adjust.instance.removeSessionCallbackParameter(String key)`.
 
 ```dart
-Adjust.removeSessionCallbackParameter('foo');
+Adjust.instance.removeSessionCallbackParameter('foo');
 ```
 
-If you wish to remove all keys and their corresponding values from the session callback parameters, you can reset it with the method `Adjust.resetSessionCallbackParameters()`.
+If you wish to remove all keys and their corresponding values from the session callback parameters, you can reset it with the method `Adjust.instance.resetSessionCallbackParameters()`.
 
 ```dart
-Adjust.resetSessionCallbackParameters();
+instance.resetSessionCallbackParameters();
 ```
 
 ### <a id="cp-session-partner-parameters"></a>Session partner parameters
@@ -584,24 +584,24 @@ In the same way that there are [session callback parameters](#session-callback-p
 
 These will be transmitted to network partners, for the integrations that have been activated in your Adjust [dashboard].
 
-The session partner parameters have a similar interface to the event partner parameters. Instead of adding the key and it's value to an event, it's added through a call to `Adjust.addSessionPartnerParameter(String key, String value)`:
+The session partner parameters have a similar interface to the event partner parameters. Instead of adding the key and it's value to an event, it's added through a call to `Adjust.instance.addSessionPartnerParameter(String key, String value)`:
 
 ```dart
-Adjust.addSessionPartnerParameter('foo', 'bar');
+Adjust.instance.addSessionPartnerParameter('foo', 'bar');
 ```
 
 The session partner parameters will be merged with the partner parameters added to an event. The partner parameters added to an event have precedence over the session partner parameters. Meaning that, when adding a partner parameter to an event with the same key to one added from the session, the value that prevails is the partner parameter added to the event.
 
-It's possible to remove a specific session partner parameter by passing the desiring key to the method `Adjust.removeSessionPartnerParameter(String key)`.
+It's possible to remove a specific session partner parameter by passing the desiring key to the method `Adjust.instance.removeSessionPartnerParameter(String key)`.
 
 ```dart
-Adjust.removeSessionPartnerParameter('foo');
+Adjust.instance.removeSessionPartnerParameter('foo');
 ```
 
-If you wish to remove all keys and their corresponding values from the session partner parameters, you can reset it with the method `Adjust.resetSessionPartnerParameters()`.
+If you wish to remove all keys and their corresponding values from the session partner parameters, you can reset it with the method `Adjust.instance.resetSessionPartnerParameters()`.
 
 ```dart
-Adjust.resetSessionPartnerParameters();
+Adjust.instance.resetSessionPartnerParameters();
 ```
 
 ### <a id="cp-delay-start"></a>Delay start
@@ -614,7 +614,7 @@ Set the initial delay time in seconds with the `delayStart` member of the config
 adjustConfig.delayStart = 5.5;
 ```
 
-In this case, this will make the Adjust SDK not send the initial install session and any event created for 5.5 seconds. After this time is expired or if you call `Adjust.sendFirstPackages()` in the meanwhile, every session parameter will be added to the delayed install session and events and the Adjust SDK will resume as usual.
+In this case, this will make the Adjust SDK not send the initial install session and any event created for 5.5 seconds. After this time is expired or if you call `Adjust.instance.sendFirstPackages()` in the meanwhile, every session parameter will be added to the delayed install session and events and the Adjust SDK will resume as usual.
 
 **The maximum delay start time of the adjust SDK is 10 seconds**.
 
@@ -658,7 +658,7 @@ Adjust SDK offers the possibility to use it for requesting user authorization in
 To use this wrapper, you can call it as such:
 
 ```dart
-Adjust.requestTrackingAuthorizationWithCompletionHandler().then((status) {
+Adjust.instance.requestTrackingAuthorizationWithCompletionHandler().then((status) {
   switch (status) {
     case 0:
       // ATTrackingManagerAuthorizationStatusNotDetermined case
@@ -707,7 +707,7 @@ adjustConfig.deactivateSKAdNetworkHandling();
 You can use Adjust SDK wrapper method `updateConversionValue` to update SKAdNetwork conversion value for your user:
 
 ```dart
-Adjust.updateConversionValue(6);
+Adjust.instance.updateConversionValue(6);
 ```
 
 ### <a id="af-subscription-tracking"></a>Subscription tracking
@@ -727,7 +727,7 @@ AdjustAppStoreSubscription subscription = new AdjustAppStoreSubscription(
 subscription.setTransactionDate(transactionDate);
 subscription.setSalesRegion(salesRegion);
 
-Adjust.trackAppStoreSubscription(subscription);
+Adjust.instance.trackAppStoreSubscription(subscription);
 ```
 
 **For Play Store subscription:**
@@ -742,7 +742,7 @@ AdjustPlayStoreSubscription subscription = new AdjustPlayStoreSubscription(
   purchaseToken);
 subscription.setPurchaseTime(purchaseTime);
 
-Adjust.trackPlayStoreSubscription(subscription);
+Adjust.instance.trackPlayStoreSubscription(subscription);
 ```
 
 Subscription tracking parameters for App Store subscription:
@@ -787,7 +787,7 @@ subscription.addCallbackParameter('foo', 'bar');
 subscription.addPartnerParameter('key', 'value');
 subscription.addPartnerParameter('foo', 'bar');
 
-Adjust.trackAppStoreSubscription(subscription);
+Adjust.instance.trackAppStoreSubscription(subscription);
 ```
 
 **For Play Store subscription:**
@@ -810,7 +810,7 @@ subscription.addCallbackParameter('foo', 'bar');
 subscription.addPartnerParameter('key', 'value');
 subscription.addPartnerParameter('foo', 'bar');
 
-Adjust.trackPlayStoreSubscription(subscription);
+Adjust.instance.trackPlayStoreSubscription(subscription);
 ```
 
 ### <a id="af-push-token"></a>Push token (uninstall tracking)
@@ -820,7 +820,7 @@ Push tokens are used for Audience Builder and client callbacks, and they are req
 To send us the push notification token, add the following call to Adjust once you have obtained your token or when ever it's value is changed:
 
 ```dart
-Adjust.setPushToken('{PushNotificationsToken}');
+Adjust.instance.setPushToken('{PushNotificationsToken}');
 ```
 
 ### <a id="af-attribution-callback"></a>Attribution callback
@@ -861,7 +861,7 @@ config.attributionCallback = (AdjustAttribution attributionChangedData) {
     print('[Adjust]: Adid: ' + attributionChangedData.adid);
   }
 };
-Adjust.start(adjustConfig);
+Adjust.instance.start(adjustConfig);
 ```
 
 The callback function will be called after the SDK receives the final attribution data. Within the callback function you have access to the `attribution` parameter. Here is a quick summary of its properties:
@@ -972,7 +972,7 @@ config.eventFailureCallback = (AdjustEventFailure eventFailureData) {
   }
 };
 
-Adjust.start(adjustConfig);
+Adjust.instance.start(adjustConfig);
 ```
 
 The callback function will be called after the SDK tries to send a package to the server. Within the callback function you have access to a response data object specifically for the callback. Here is a quick summary of the success session response data object fields:
@@ -996,7 +996,7 @@ And both event and session failed objects also contain:
 Like described in [attribution callback section](#af-attribution-callback), this callback get triggered providing you info about new attribution when ever it changes. In case you want to access info about your user's current attribution whenever you need it, you can make a call to following method of the `Adjust` instance:
 
 ```dart
-AdjustAttribution attribution = Adjust.getAttribution();
+AdjustAttribution attribution = await Adjust.instance.getAttribution();
 ```
 
 **Note**: Information about current attribution is available after app installation has been tracked by the Adjust backend and attribution callback has been initially triggered. From that moment on, Adjust SDK has information about your user's attribution and you can access it with this method. So, **it is not possible** to access user's attribution value before the SDK has been initialized and attribution callback has been initially triggered.
@@ -1010,7 +1010,7 @@ The Adjust SDK offers you possibility to obtain some of the device identifiers.
 To obtain the IDFA, call the `getIdfa` method of the `Adjust` instance:
 
 ```dart
-Adjust.getIdfa().then((idfa) {
+Adjust.instance.getIdfa().then((idfa) {
   // Use idfa string value.
 });
 ```
@@ -1019,10 +1019,10 @@ Adjust.getIdfa().then((idfa) {
 
 Certain services (such as Google Analytics) require you to coordinate Device and Client IDs in order to prevent duplicate reporting.
 
-To obtain the device Google Advertising identifier, it's necessary to pass a callback function to `Adjust.getGoogleAdId` that will receive the Google Advertising ID in it's argument, like this:
+To obtain the device Google Advertising identifier, it's necessary to pass a callback function to `Adjust.instance.getGoogleAdId` that will receive the Google Advertising ID in it's argument, like this:
 
 ```dart
-Adjust.getGoogleAdId().then((googleAdId) {
+Adjust.instance.getGoogleAdId().then((googleAdId) {
   // Use googleAdId string value.
 });
 ```
@@ -1032,7 +1032,7 @@ Adjust.getGoogleAdId().then((googleAdId) {
 To obtain the Amazon advertising identifier, call the `getAmazonAdId` method of the `Adjust` instance:
 
 ```dart
-Adjust.getAmazonAdId().then((amazonAdId) {
+Adjust.instance.getAmazonAdId().then((amazonAdId) {
   // Use amazonAdId string value.
 });
 ```
@@ -1042,7 +1042,7 @@ Adjust.getAmazonAdId().then((amazonAdId) {
 For each device with your app installed on it, Adjust backend generates unique **Adjust device identifier** (**adid**). In order to obtain this identifier, you can make a call the `getAdid` method of the `Adjust` instance:
 
 ```dart
-Adjust.getAdid().then((adid) {
+Adjust.instance.getAdid().then((adid) {
   // Use adid string value.
 });
 ```
@@ -1074,7 +1074,7 @@ You can put the Adjust SDK in offline mode to suspend transmission to our server
 You can activate offline mode by calling `setOfflineMode` with the parameter `true`.
 
 ```dart
-Adjust.setOfflineMode(true);
+Adjust.instance.setOfflineMode(true);
 ```
 
 Conversely, you can deactivate offline mode by calling `setOfflineMode` with `false`. When the Adjust SDK is put back in online mode, all saved information is sent to our servers with the correct time information.
@@ -1086,7 +1086,7 @@ Unlike disabling tracking, this setting is **not remembered** between sessions. 
 You can disable the Adjust SDK from tracking any activities of the current device by calling `setEnabled` with parameter `false`. **This setting is remembered between sessions**.
 
 ```dart
-Adjust.setEnabled(false);
+Adjust.instance.setEnabled(false);
 ```
 
 You can check if the Adjust SDK is currently enabled by calling the function `isEnabled`. It is always possible to activatе the Adjust SDK by invoking `setEnabled` with the enabled parameter as `true`.
@@ -1112,7 +1112,7 @@ adjustConfig.sendInBackground = true;
 In accordance with article 17 of the EU's General Data Protection Regulation (GDPR), you can notify Adjust when a user has exercised their right to be forgotten. Calling the following method will instruct the Adjust SDK to communicate the user's choice to be forgotten to the Adjust backend:
 
 ```dart
-Adjust.gdprForgetMe();
+instance.gdprForgetMe();
 ```
 
 Upon receiving this information, Adjust will erase the user's data and the Adjust SDK will stop tracking the user. No requests from this device will be sent to Adjust in the future.
@@ -1127,7 +1127,7 @@ Call the following method to instruct the Adjust SDK to communicate the user's c
 
 ```dart
 AdjustThirdPartySharing adjustThirdPartySharing = new AdjustThirdPartySharing(false);
-Adjust.trackThirdPartySharing(adjustThirdPartySharing);
+Adjust.instance.instance.trackThirdPartySharing(adjustThirdPartySharing);
 ```
 
 Upon receiving this information, Adjust will block the sharing of that specific user's data to partners and the Adjust SDK will continue to work as usual.
@@ -1138,7 +1138,7 @@ Call the following method to instruct the Adjust SDK to communicate the user's c
 
 ```dart
 AdjustThirdPartySharing adjustThirdPartySharing = new AdjustThirdPartySharing(false);
-Adjust.trackThirdPartySharing(adjustThirdPartySharing);
+Adjust.instance.trackThirdPartySharing(adjustThirdPartySharing);
 ```
 
 Upon receiving this information, Adjust changes sharing the specific user's data to partners. The Adjust SDK will continue to work as expected.
@@ -1148,7 +1148,7 @@ Call the following method to instruct the Adjust SDK to send the granular option
 ```dart
 AdjustThirdPartySharing adjustThirdPartySharing = new AdjustThirdPartySharing(null);
 adjustThirdPartySharing.addGranularOption('PartnerA', 'foo', 'bar');
-Adjust.trackThirdPartySharing(adjustThirdPartySharing);
+Adjust.instance.trackThirdPartySharing(adjustThirdPartySharing);
 ```
 
 ### <a id="af-measurement-consent"></a>Consent measurement for specific users
@@ -1158,7 +1158,7 @@ You can notify Adjust when a user exercises their right to change data sharing w
 Call the following method to instruct the Adjust SDK to communicate the user's choice to change data sharing, to the Adjust backend:
 
 ```dart
-Adjust.trackMeasurementConsent(true);
+Adjust.instance.trackMeasurementConsent(true);
 ```
 
 Upon receiving this information, Adjust changes sharing the specific user's data to partners. The Adjust SDK will continue to work as expected.
